@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>오늘의 OOTD</title>
+<title>오늘의 OOTD (오프라인)</title>
 <style>
   :root{
     --cream: #FFF8E7;
@@ -67,9 +67,17 @@
     to{ opacity: 1; transform: translateY(0); }
   }
 
-  .big-emoji{ font-size: 70px; margin-bottom: 8px; }
+  .big-emoji{ font-size: 60px; margin-bottom: 8px; }
 
-  .desc-text{ font-size: 17px; color: var(--brown); line-height: 1.6; margin: 10px 0 26px; }
+  .desc-text{ font-size: 17px; color: var(--brown); line-height: 1.6; margin: 10px 0 24px; }
+
+  .field-label{
+    text-align: left;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--brown-dark);
+    margin: 0 0 10px;
+  }
 
   .primary-btn{
     background: var(--yellow-deep);
@@ -85,6 +93,7 @@
     transition: transform 0.15s ease, background 0.15s ease;
   }
   .primary-btn:hover{ background: var(--yellow); transform: translateY(-2px); }
+  .primary-btn:disabled{ opacity: 0.5; cursor: not-allowed; transform: none; }
 
   .secondary-btn{
     background: var(--cream);
@@ -102,19 +111,22 @@
   }
   .secondary-btn:hover{ background: var(--yellow); transform: translateY(-2px); }
 
-  .status-text{ font-size: 15px; color: var(--brown); margin-top: 14px; min-height: 20px; }
+  .status-text{ font-size: 14px; color: var(--brown); margin-top: 10px; min-height: 18px; }
 
-  .error-box{
-    background: #FFF0E9;
-    border: 2px solid var(--coral);
-    border-radius: 14px;
-    padding: 14px 16px;
-    font-size: 15px;
-    color: #B84B25;
-    margin-top: 16px;
-    text-align: left;
-    display: none;
+  /* 지역 입력 화면 */
+  .region-input{
+    width: 100%;
+    padding: 16px 18px;
+    border-radius: 16px;
+    border: 2px solid var(--yellow-deep);
+    font-size: 18px;
+    font-family: inherit;
+    background: var(--cream);
+    color: var(--brown-dark);
+    text-align: center;
+    margin-bottom: 18px;
   }
+  .region-input:focus{ outline: none; border-color: var(--coral); }
 
   /* 위치 확인 화면 */
   .location-card{
@@ -124,8 +136,8 @@
     padding: 24px 18px;
     margin-bottom: 22px;
   }
-  .location-card .loc-name{ font-size: 24px; font-weight: 900; margin: 4px 0; }
-  .location-card .loc-sub{ font-size: 15px; opacity: 0.95; }
+  .location-card .loc-name{ font-size: 26px; font-weight: 900; margin: 4px 0; }
+  .location-card .loc-sub{ font-size: 14px; opacity: 0.95; }
 
   .yes-no-row{ display: flex; gap: 10px; }
   .yes-no-row button{ flex: 1; }
@@ -136,40 +148,78 @@
   }
   .no-btn:hover{ background: var(--cream); }
 
-  /* 검색 화면 */
-  .search-row{ display: flex; gap: 8px; margin-bottom: 16px; }
-  .search-row input{
-    flex: 1;
-    padding: 14px 16px;
-    border-radius: 14px;
-    border: 2px solid var(--yellow-deep);
-    font-size: 16px;
-    font-family: inherit;
-    background: var(--cream);
-    color: var(--brown-dark);
-  }
-  .search-row input:focus{ outline: none; border-color: var(--coral); }
-  .search-row button{ width: auto; padding: 14px 20px; }
+  /* 날씨 입력 화면 */
+  .weather-form{ text-align: left; }
 
-  .search-result-item{
+  .cond-grid{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+  .cond-btn{
+    background: var(--cream);
+    border: 2px solid var(--cream-deep);
+    border-radius: 14px;
+    padding: 12px 4px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--brown-dark);
+    cursor: pointer;
+    font-family: inherit;
+    transition: border 0.15s ease, background 0.15s ease, transform 0.15s ease;
+  }
+  .cond-btn .cb-emoji{ font-size: 26px; display: block; margin-bottom: 4px; }
+  .cond-btn:hover{ transform: translateY(-2px); }
+  .cond-btn.selected{
+    background: var(--yellow);
+    border-color: var(--yellow-deep);
+  }
+
+  .wind-row{ display: flex; gap: 8px; margin-bottom: 22px; }
+  .wind-btn{
+    flex: 1;
+    background: var(--cream);
+    border: 2px solid var(--cream-deep);
+    border-radius: 14px;
+    padding: 12px 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--brown-dark);
+    cursor: pointer;
+    font-family: inherit;
+    transition: border 0.15s ease, background 0.15s ease, transform 0.15s ease;
+  }
+  .wind-btn .wb-emoji{ font-size: 22px; display: block; margin-bottom: 4px; }
+  .wind-btn:hover{ transform: translateY(-2px); }
+  .wind-btn.selected{ background: var(--sky); border-color: var(--sky-deep); }
+
+  .temp-row{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .temp-btn-round{
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--yellow-deep);
+    background: var(--cream);
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--brown-dark);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .temp-btn-round:hover{ background: var(--yellow); }
+  .temp-display{
+    flex: 1;
+    text-align: center;
+    font-size: 30px;
+    font-weight: 900;
     background: var(--cream);
     border-radius: 14px;
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    text-align: left;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 700;
-    border: 2px solid transparent;
-    transition: border 0.15s ease, background 0.15s ease;
-  }
-  .search-result-item:hover{ border-color: var(--yellow-deep); background: var(--yellow); }
-  .search-result-item span{
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--brown);
-    margin-top: 2px;
+    padding: 10px;
   }
 
   /* 결과 화면 */
@@ -179,7 +229,7 @@
     padding: 26px 18px;
     margin-bottom: 22px;
   }
-  .weather-summary .w-emoji{ font-size: 64px; }
+  .weather-summary .w-emoji{ font-size: 60px; }
   .weather-summary .w-temp{ font-size: 40px; font-weight: 900; margin: 4px 0; color: var(--brown-dark); }
   .weather-summary .w-label{ font-size: 17px; font-weight: 700; color: var(--brown-dark); }
   .weather-summary .w-sub{ font-size: 14px; color: var(--brown); margin-top: 6px; }
@@ -227,9 +277,17 @@
     text-align: left;
   }
 
+  .offline-note{
+    font-size: 12px;
+    color: var(--brown);
+    opacity: 0.75;
+    margin-top: 18px;
+  }
+
   @media (max-width: 420px){
     h1{ font-size: 26px; }
     .outfit-grid{ grid-template-columns: 1fr; }
+    .cond-grid{ grid-template-columns: repeat(4, 1fr); }
   }
 </style>
 </head>
@@ -237,46 +295,53 @@
 <div class="wrap">
 
   <header>
-    <span class="badge">오늘의 날씨 코디</span>
+    <span class="badge">오프라인 · 인터넷 연결 불필요</span>
     <h1>👕 날씨 기반 OOTD</h1>
-    <p>지금 날씨에 딱 맞는 옷차림과 신발, 우산까지 한 번에 추천해드려요.</p>
+    <p>지금 날씨를 직접 골라 입력하면<br>바로 그 자리에서 코디를 추천해드려요.</p>
   </header>
 
   <div class="panel">
 
-    <!-- 화면 1: 시작 -->
-    <div class="screen active" id="screen-start">
+    <!-- 화면 1: 지역 입력 -->
+    <div class="screen active" id="screen-region">
       <div class="big-emoji">📍</div>
-      <p class="desc-text">내 위치의 실시간 날씨를 불러와서<br>오늘 입을 옷을 추천해드릴게요.</p>
-      <button class="primary-btn" id="btn-start">내 위치로 날씨 확인하기</button>
-      <div class="status-text" id="start-status"></div>
-      <div class="error-box" id="start-error"></div>
+      <p class="desc-text">지금 계신 지역 이름을 입력해주세요.</p>
+      <input type="text" class="region-input" id="region-input" placeholder="예: 서울시 강남구">
+      <button class="primary-btn" id="btn-region-next">다음</button>
+      <div class="status-text" id="region-status"></div>
     </div>
 
     <!-- 화면 2: 위치 확인 -->
     <div class="screen" id="screen-confirm">
       <div class="location-card">
-        <div style="font-size:14px; opacity:0.9;">현재 감지된 위치</div>
+        <div style="font-size:14px; opacity:0.9;">입력하신 위치</div>
         <div class="loc-name" id="confirm-loc-name">-</div>
-        <div class="loc-sub" id="confirm-loc-sub">-</div>
+        <div class="loc-sub">이 위치가 맞나요?</div>
       </div>
-      <p class="desc-text">이 위치가 맞나요?</p>
       <div class="yes-no-row">
         <button class="primary-btn" id="btn-yes">예, 맞아요</button>
-        <button class="secondary-btn no-btn" id="btn-no">아니요</button>
+        <button class="secondary-btn no-btn" id="btn-no">아니요, 다시 입력할게요</button>
       </div>
     </div>
 
-    <!-- 화면 3: 직접 검색 -->
-    <div class="screen" id="screen-search">
-      <div class="big-emoji">🔍</div>
-      <p class="desc-text">지역 이름을 직접 검색해주세요.<br>예: 서울, 부산 해운대, 대전</p>
-      <div class="search-row">
-        <input type="text" id="search-input" placeholder="지역 이름 입력">
-        <button class="primary-btn" id="btn-search" style="width:auto;">검색</button>
+    <!-- 화면 3: 날씨 직접 입력 -->
+    <div class="screen" id="screen-weather-input">
+      <div class="weather-form">
+        <p class="field-label">☁️ 지금 하늘 상태는 어떤가요?</p>
+        <div class="cond-grid" id="cond-grid"></div>
+
+        <p class="field-label">💨 바람은 어느 정도인가요?</p>
+        <div class="wind-row" id="wind-row"></div>
+
+        <p class="field-label">🌡️ 현재 기온은 몇 도인가요?</p>
+        <div class="temp-row">
+          <button class="temp-btn-round" id="temp-minus">−</button>
+          <div class="temp-display"><span id="temp-value">18</span>℃</div>
+          <button class="temp-btn-round" id="temp-plus">+</button>
+        </div>
       </div>
-      <div id="search-results"></div>
-      <div class="status-text" id="search-status"></div>
+      <button class="primary-btn" id="btn-get-outfit" disabled>이 날씨로 코디 추천받기</button>
+      <div class="status-text" id="weather-input-status">하늘 상태와 바람을 먼저 골라주세요.</div>
     </div>
 
     <!-- 화면 4: 결과 -->
@@ -315,8 +380,11 @@
         💡 <span id="result-tip">-</span>
       </div>
 
+      <button class="secondary-btn" id="btn-back-weather">🌤️ 날씨 다시 입력하기</button>
       <button class="secondary-btn" id="btn-reset">🔄 지역 다시 선택하기</button>
     </div>
+
+    <p class="offline-note">※ 인터넷 연결 없이 완전히 오프라인으로 작동해요. 날씨 정보는 직접 입력한 값을 기준으로 추천돼요.</p>
 
   </div>
 </div>
@@ -326,9 +394,9 @@
   // 화면 전환 관련 요소
   // =====================================================
   const screens = {
-    start: document.getElementById('screen-start'),
+    region: document.getElementById('screen-region'),
     confirm: document.getElementById('screen-confirm'),
-    search: document.getElementById('screen-search'),
+    weatherInput: document.getElementById('screen-weather-input'),
     result: document.getElementById('screen-result'),
   };
 
@@ -338,49 +406,35 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // 현재 선택된 위치 정보를 담아둘 변수
-  let currentLocation = null; // { name, sub, latitude, longitude }
+  // 사용자가 입력/선택한 정보를 담아둘 변수들
+  let regionName = '';
+  let selectedCondition = null; // { key, label, emoji, code }
+  let selectedWind = null;      // { key, label, emoji, kmh }
+  let currentTemp = 18;
 
   // =====================================================
-  // 날씨 코드 → 한국어 라벨 / 이모지 매핑 (WMO 날씨코드 기준)
+  // 날씨 상태 목록 (직접 선택하는 8가지) — 코드값은 기존 옷차림 로직과 연결
   // =====================================================
-  const WEATHER_INFO = {
-    0:  { label: '맑음', emoji: '☀️' },
-    1:  { label: '대체로 맑음', emoji: '🌤️' },
-    2:  { label: '구름 조금', emoji: '⛅' },
-    3:  { label: '흐림', emoji: '☁️' },
-    45: { label: '안개', emoji: '🌫️' },
-    48: { label: '짙은 안개', emoji: '🌫️' },
-    51: { label: '약한 이슬비', emoji: '🌦️' },
-    53: { label: '이슬비', emoji: '🌦️' },
-    55: { label: '강한 이슬비', emoji: '🌧️' },
-    56: { label: '어는 이슬비', emoji: '🌧️' },
-    57: { label: '강한 어는 이슬비', emoji: '🌧️' },
-    61: { label: '약한 비', emoji: '🌧️' },
-    63: { label: '비', emoji: '🌧️' },
-    65: { label: '강한 비', emoji: '🌧️' },
-    66: { label: '어는 비', emoji: '🌧️' },
-    67: { label: '강한 어는 비', emoji: '🌧️' },
-    71: { label: '약한 눈', emoji: '🌨️' },
-    73: { label: '눈', emoji: '🌨️' },
-    75: { label: '강한 눈', emoji: '❄️' },
-    77: { label: '싸락눈', emoji: '🌨️' },
-    80: { label: '약한 소나기', emoji: '🌦️' },
-    81: { label: '소나기', emoji: '🌧️' },
-    82: { label: '강한 소나기', emoji: '⛈️' },
-    85: { label: '약한 눈 소나기', emoji: '🌨️' },
-    86: { label: '강한 눈 소나기', emoji: '❄️' },
-    95: { label: '뇌우', emoji: '⛈️' },
-    96: { label: '우박 동반 뇌우', emoji: '⛈️' },
-    99: { label: '강한 우박 동반 뇌우', emoji: '⛈️' },
-  };
+  const CONDITIONS = [
+    { key: 'clear',   label: '맑음',     emoji: '☀️', code: 0  },
+    { key: 'cloudy2',  label: '구름많음', emoji: '⛅', code: 2  },
+    { key: 'overcast', label: '흐림',     emoji: '☁️', code: 3  },
+    { key: 'fog',      label: '안개',     emoji: '🌫️', code: 45 },
+    { key: 'rain',     label: '비',       emoji: '🌧️', code: 63 },
+    { key: 'shower',   label: '소나기',   emoji: '🌦️', code: 81 },
+    { key: 'thunder',  label: '뇌우',     emoji: '⛈️', code: 95 },
+    { key: 'snow',     label: '눈',       emoji: '❄️', code: 73 },
+  ];
 
-  function getWeatherInfo(code){
-    return WEATHER_INFO[code] || { label: '알 수 없음', emoji: '🌡️' };
-  }
+  // 바람 세기 3단계 (기존 로직의 강풍 40km/h, 태풍급 60km/h 기준과 연결)
+  const WINDS = [
+    { key: 'calm',     label: '잔잔함',   emoji: '🍃', kmh: 10 },
+    { key: 'strong',   label: '바람 강함', emoji: '💨', kmh: 45 },
+    { key: 'typhoon',  label: '태풍급',   emoji: '🌀', kmh: 65 },
+  ];
 
   // =====================================================
-  // 날씨 코드로 비/눈/뇌우/안개 여부 판단하는 함수들
+  // 날씨 코드로 비/눈/뇌우/안개/맑음 여부 판단
   // =====================================================
   const RAIN_CODES = [51,53,55,56,57,61,63,65,66,67,80,81,82,95,96,99];
   const SNOW_CODES = [71,73,75,77,85,86];
@@ -490,200 +544,148 @@
   }
 
   // =====================================================
-  // 화면 1: "내 위치로 날씨 확인하기" 버튼
+  // 화면 1: 지역 입력
   // =====================================================
-  const btnStart = document.getElementById('btn-start');
-  const startStatus = document.getElementById('start-status');
-  const startError = document.getElementById('start-error');
+  const regionInput = document.getElementById('region-input');
+  const regionStatus = document.getElementById('region-status');
 
-  btnStart.addEventListener('click', () => {
-    startError.style.display = 'none';
-    startStatus.textContent = '📍 위치 정보를 확인하는 중이에요...';
-
-    if (!navigator.geolocation){
-      startError.style.display = 'block';
-      startError.textContent = '이 브라우저는 위치 정보 기능을 지원하지 않아요. 아래에서 지역을 직접 검색해주세요.';
-      startStatus.textContent = '';
-      showScreen('search');
+  document.getElementById('btn-region-next').addEventListener('click', () => {
+    const value = regionInput.value.trim();
+    if (!value){
+      regionStatus.textContent = '지역 이름을 입력해주세요.';
       return;
     }
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        startStatus.textContent = '🗺️ 지역 이름을 확인하는 중이에요...';
-
-        try {
-          const locName = await reverseGeocode(lat, lon);
-          currentLocation = {
-            name: locName.main,
-            sub: locName.sub,
-            latitude: lat,
-            longitude: lon,
-          };
-          document.getElementById('confirm-loc-name').textContent = currentLocation.name;
-          document.getElementById('confirm-loc-sub').textContent = currentLocation.sub;
-          startStatus.textContent = '';
-          showScreen('confirm');
-        } catch (err){
-          startError.style.display = 'block';
-          startError.textContent = '지역 이름을 불러오지 못했어요. 아래에서 지역을 직접 검색해주세요.';
-          startStatus.textContent = '';
-          showScreen('search');
-        }
-      },
-      (error) => {
-        startStatus.textContent = '';
-        startError.style.display = 'block';
-        startError.textContent = '위치 권한이 거부되었거나 오류가 발생했어요. 아래에서 지역을 직접 검색해주세요.';
-        showScreen('search');
-      },
-      { timeout: 10000 }
-    );
+    regionName = value;
+    regionStatus.textContent = '';
+    document.getElementById('confirm-loc-name').textContent = regionName;
+    showScreen('confirm');
   });
 
-  // 위도/경도를 지역 이름으로 바꿔주는 함수 (BigDataCloud 무료 API, 키 필요 없음)
-  async function reverseGeocode(lat, lon){
-    const url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=ko`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('reverse geocode failed');
-    const data = await res.json();
-    const main = data.city || data.locality || data.principalSubdivision || '알 수 없는 지역';
-    const sub = [data.principalSubdivision, data.countryName].filter(Boolean).join(' · ');
-    return { main, sub: sub || '위치 확인됨' };
-  }
+  regionInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('btn-region-next').click();
+  });
 
   // =====================================================
   // 화면 2: 위치 확인 (예 / 아니요)
   // =====================================================
   document.getElementById('btn-yes').addEventListener('click', () => {
-    loadWeatherAndShowResult();
+    showScreen('weatherInput');
   });
 
   document.getElementById('btn-no').addEventListener('click', () => {
-    showScreen('search');
+    regionInput.value = '';
+    regionInput.focus();
+    showScreen('region');
   });
 
   // =====================================================
-  // 화면 3: 지역 직접 검색
+  // 화면 3: 날씨 직접 입력
   // =====================================================
-  const searchInput = document.getElementById('search-input');
-  const searchResults = document.getElementById('search-results');
-  const searchStatus = document.getElementById('search-status');
-  const btnSearch = document.getElementById('btn-search');
+  const condGrid = document.getElementById('cond-grid');
+  const windRow = document.getElementById('wind-row');
+  const btnGetOutfit = document.getElementById('btn-get-outfit');
+  const weatherInputStatus = document.getElementById('weather-input-status');
 
-  btnSearch.addEventListener('click', doSearch);
-  searchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') doSearch();
+  // 하늘 상태 버튼 생성
+  CONDITIONS.forEach(cond => {
+    const btn = document.createElement('button');
+    btn.className = 'cond-btn';
+    btn.innerHTML = `<span class="cb-emoji">${cond.emoji}</span>${cond.label}`;
+    btn.addEventListener('click', () => {
+      selectedCondition = cond;
+      document.querySelectorAll('.cond-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      checkWeatherFormReady();
+    });
+    condGrid.appendChild(btn);
   });
 
-  async function doSearch(){
-    const query = searchInput.value.trim();
-    if (!query){
-      searchStatus.textContent = '지역 이름을 입력해주세요.';
-      return;
-    }
-    searchStatus.textContent = '🔍 검색 중이에요...';
-    searchResults.innerHTML = '';
+  // 바람 세기 버튼 생성
+  WINDS.forEach(wind => {
+    const btn = document.createElement('button');
+    btn.className = 'wind-btn';
+    btn.innerHTML = `<span class="wb-emoji">${wind.emoji}</span>${wind.label}`;
+    btn.addEventListener('click', () => {
+      selectedWind = wind;
+      document.querySelectorAll('.wind-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      checkWeatherFormReady();
+    });
+    windRow.appendChild(btn);
+  });
 
-    try {
-      // Open-Meteo 지오코딩 API (무료, 키 필요 없음)
-      const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=6&language=ko&format=json`;
-      const res = await fetch(url);
-      const data = await res.json();
-
-      if (!data.results || data.results.length === 0){
-        searchStatus.textContent = '검색 결과가 없어요. 다른 이름으로 시도해보세요.';
-        return;
-      }
-
-      searchStatus.textContent = '';
-      data.results.forEach(place => {
-        const item = document.createElement('div');
-        item.className = 'search-result-item';
-        const subInfo = [place.admin1, place.country].filter(Boolean).join(' · ');
-        item.innerHTML = `${place.name}<span>${subInfo}</span>`;
-        item.addEventListener('click', () => {
-          currentLocation = {
-            name: place.name,
-            sub: subInfo || '위치 선택됨',
-            latitude: place.latitude,
-            longitude: place.longitude,
-          };
-          loadWeatherAndShowResult();
-        });
-        searchResults.appendChild(item);
-      });
-    } catch (err){
-      searchStatus.textContent = '검색 중 오류가 발생했어요. 인터넷 연결을 확인해주세요.';
+  function checkWeatherFormReady(){
+    if (selectedCondition && selectedWind){
+      btnGetOutfit.disabled = false;
+      weatherInputStatus.textContent = '';
+    } else {
+      btnGetOutfit.disabled = true;
+      weatherInputStatus.textContent = '하늘 상태와 바람을 먼저 골라주세요.';
     }
   }
 
-  // =====================================================
-  // 날씨 데이터를 불러와서 결과 화면을 채우는 함수
-  // =====================================================
-  async function loadWeatherAndShowResult(){
-    if (!currentLocation) return;
+  // 기온 +/- 버튼
+  const tempValueEl = document.getElementById('temp-value');
+  document.getElementById('temp-minus').addEventListener('click', () => {
+    currentTemp = Math.max(-20, currentTemp - 1);
+    tempValueEl.textContent = currentTemp;
+  });
+  document.getElementById('temp-plus').addEventListener('click', () => {
+    currentTemp = Math.min(45, currentTemp + 1);
+    tempValueEl.textContent = currentTemp;
+  });
 
-    // 결과 화면으로 넘어가면서 로딩 표시
+  btnGetOutfit.addEventListener('click', () => {
+    if (!selectedCondition || !selectedWind) return;
+    showResult();
+  });
+
+  // =====================================================
+  // 화면 4: 결과 표시 (완전히 오프라인 계산, 네트워크 요청 없음)
+  // =====================================================
+  function showResult(){
+    const outfit = buildOutfit(currentTemp, selectedCondition.code, selectedWind.kmh);
+
+    document.getElementById('result-emoji').textContent = selectedCondition.emoji;
+    document.getElementById('result-temp').textContent = `${currentTemp}℃`;
+    document.getElementById('result-label').textContent = selectedCondition.label;
+    document.getElementById('result-sub').textContent =
+      `${regionName} · 바람 ${selectedWind.label}`;
+
+    document.getElementById('oc-top').textContent = outfit.top;
+    document.getElementById('oc-bottom').textContent = outfit.bottom;
+    document.getElementById('oc-outer').textContent = outfit.outer;
+    document.getElementById('oc-shoes').textContent = outfit.shoes;
+
+    const umbrellaBox = document.getElementById('umbrella-box');
+    umbrellaBox.className = 'umbrella-box ' + (outfit.umbrella ? 'umbrella-yes' : 'umbrella-no');
+    document.getElementById('umbrella-text').textContent =
+      (outfit.umbrella ? '☔ ' : '🙂 ') + outfit.umbrellaText;
+
+    document.getElementById('result-tip').textContent = outfit.tip;
+
     showScreen('result');
-    document.getElementById('result-label').textContent = '날씨를 불러오는 중이에요...';
-    document.getElementById('result-temp').textContent = '';
-    document.getElementById('result-emoji').textContent = '⏳';
-
-    try {
-      const { latitude, longitude } = currentLocation;
-      // Open-Meteo 실시간 날씨 API (무료, 키 필요 없음)
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&timezone=auto`;
-      const res = await fetch(url);
-      const data = await res.json();
-      const current = data.current_weather;
-
-      const tempC = current.temperature;
-      const code = current.weathercode;
-      const windKmh = current.windspeed;
-
-      const info = getWeatherInfo(code);
-      const outfit = buildOutfit(tempC, code, windKmh);
-
-      // 결과 화면 채우기
-      document.getElementById('result-emoji').textContent = info.emoji;
-      document.getElementById('result-temp').textContent = `${Math.round(tempC)}℃`;
-      document.getElementById('result-label').textContent = info.label;
-      document.getElementById('result-sub').textContent =
-        `${currentLocation.name} · 바람 ${Math.round(windKmh)}km/h`;
-
-      document.getElementById('oc-top').textContent = outfit.top;
-      document.getElementById('oc-bottom').textContent = outfit.bottom;
-      document.getElementById('oc-outer').textContent = outfit.outer;
-      document.getElementById('oc-shoes').textContent = outfit.shoes;
-
-      const umbrellaBox = document.getElementById('umbrella-box');
-      umbrellaBox.className = 'umbrella-box ' + (outfit.umbrella ? 'umbrella-yes' : 'umbrella-no');
-      document.getElementById('umbrella-text').textContent =
-        (outfit.umbrella ? '☔ ' : '🙂 ') + outfit.umbrellaText;
-
-      document.getElementById('result-tip').textContent = outfit.tip;
-
-    } catch (err){
-      document.getElementById('result-label').textContent = '날씨를 불러오지 못했어요.';
-      document.getElementById('result-sub').textContent = '인터넷 연결을 확인하고 다시 시도해주세요.';
-      document.getElementById('result-emoji').textContent = '⚠️';
-    }
   }
 
   // =====================================================
-  // 결과 화면: "지역 다시 선택하기" 버튼
+  // 결과 화면 버튼들
   // =====================================================
+  document.getElementById('btn-back-weather').addEventListener('click', () => {
+    showScreen('weatherInput');
+  });
+
   document.getElementById('btn-reset').addEventListener('click', () => {
-    currentLocation = null;
-    searchInput.value = '';
-    searchResults.innerHTML = '';
-    searchStatus.textContent = '';
-    startStatus.textContent = '';
-    startError.style.display = 'none';
-    showScreen('start');
+    regionName = '';
+    selectedCondition = null;
+    selectedWind = null;
+    currentTemp = 18;
+    tempValueEl.textContent = currentTemp;
+    document.querySelectorAll('.cond-btn').forEach(b => b.classList.remove('selected'));
+    document.querySelectorAll('.wind-btn').forEach(b => b.classList.remove('selected'));
+    checkWeatherFormReady();
+    regionInput.value = '';
+    regionStatus.textContent = '';
+    showScreen('region');
   });
 </script>
 </body>
